@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Number Buddy</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #FDFCF0;
+      color: #1e293b;
+      padding: 16px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      background: #facc15;
+      color: white;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 18px;
+      font-size: 28px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+      transform: rotate(3deg);
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 900;
+    }
+    .brand p {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .nav {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 14px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+      gap: 4px;
+    }
+    .nav button {
+      border: none;
+      background: transparent;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #64748b;
+    }
+    .nav button.active {
+      background: white;
+      color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    @media (min-width: 1000px) {
+      .main {
+        grid-template-columns: 5fr 7fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+      border-bottom: 8px solid #e2e8f0;
+    }
+
+    .big-card {
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .big-number {
+      font-size: 120px;
+      font-weight: 900;
+      color: #4f46e5;
+      line-height: 1;
+      margin-bottom: 18px;
+      animation: popIn 0.25s ease;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .visual-counter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: center;
+      max-width: 360px;
+      margin: 0 auto;
+      padding: 16px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 20px;
+      min-height: 120px;
+      align-items: center;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      background: #6366f1;
+      border-radius: 999px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+      animation: dotIn 0.2s ease;
+    }
+    @keyframes dotIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+    .hint {
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    .actions {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .circle-btn, .quiz-btn, .cell, .reset-btn {
+      transition: 0.2s ease;
+    }
+    .circle-btn:hover, .quiz-btn:hover, .cell:hover, .reset-btn:hover {
+      transform: translateY(-1px);
+    }
+    .circle-btn:active, .quiz-btn:active, .cell:active, .reset-btn:active {
+      transform: scale(0.96);
+    }
+
+    .circle-btn {
+      border: none;
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .gray-btn {
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .gray-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .yellow-btn {
+      background: #facc15;
+      color: white;
+      box-shadow: 0 8px 16px rgba(250,204,21,0.35);
+    }
+
+    .stats {
+      background: #4f46e5;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: 0 14px 30px rgba(79,70,229,0.25);
+    }
+    .stats-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .stats-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .stats small {
+      display: block;
+      color: #c7d2fe;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+    .stats strong {
+      display: block;
+      font-size: 34px;
+      font-weight: 900;
+    }
+    .reset-btn {
+      border: none;
+      background: transparent;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .reset-btn:hover {
+      background: rgba(255,255,255,0.12);
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .panel-title h3 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 900;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: #94a3b8;
+      font-weight: 800;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-box {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 700px) {
+      .grid {
+        grid-template-columns: repeat(10, 1fr);
+      }
+    }
+
+    .cell {
+      border: 1px solid #e2e8f0;
+      background: white;
+      color: #475569;
+      border-radius: 14px;
+      aspect-ratio: 1/1;
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      position: relative;
+    }
+    .cell:hover {
+      border-color: #facc15;
+    }
+    .cell.active {
+      background: #facc15;
+      color: white;
+      box-shadow: 0 8px 18px rgba(250,204,21,0.35);
+      outline: 4px solid #fef08a;
+    }
+    .cell.completed {
+      background: #d1fae5;
+      color: #047857;
+      border: 2px solid #86efac;
+    }
+    .star {
+      position: absolute;
+      top: 3px;
+      right: 5px;
+      font-size: 12px;
+      color: #eab308;
+    }
+
+    .quiz-head {
+      margin-bottom: 20px;
+    }
+    .quiz-head .trophy {
+      font-size: 44px;
+      margin-bottom: 8px;
+    }
+    .quiz-head h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 900;
+    }
+    .quiz-head p {
+      margin: 0;
+      color: #64748b;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .quiz-target {
+      color: #4f46e5;
+      font-size: 40px;
+      font-weight: 900;
+    }
+    .quiz-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(100px, 1fr));
+      gap: 14px;
+      max-width: 320px;
+      margin: 0 auto;
+    }
+    .quiz-btn {
+      border: 2px solid #f1f5f9;
+      background: white;
+      color: #334155;
+      border-radius: 20px;
+      padding: 24px;
+      font-size: 36px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .quiz-btn:hover {
+      border-color: #818cf8;
+      color: #4f46e5;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      text-align: center;
+      padding: 20px;
+    }
+    .overlay.show {
+      display: flex;
+    }
+    .overlay-box {
+      font-weight: 900;
+    }
+    .overlay-icon {
+      font-size: 72px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .correct { color: #10b981; }
+    .wrong { color: #f43f5e; }
+
+    .footer {
+      margin-top: 28px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 14px;
+      font-weight: 600;
+      padding-bottom: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">✨</div>
+        <div>
+          <h1>Number Buddy</h1>
+          <p>Let's learn to count!</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button id="tabExplore" class="active">Explore</button>
+        <button id="tabQuiz">Quiz</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <section class="card big-card">
+          <div id="exploreView">
+            <div class="center">
+              <div id="bigNumber" class="big-number">?</div>
+            </div>
+
+            <div id="visualCounter" class="visual-counter">
+              <p class="hint">Click a number to start counting!</p>
+            </div>
+
+            <div class="actions">
+              <button id="prevBtn" class="circle-btn gray-btn">◀</button>
+              <button id="speakBtn" class="circle-btn yellow-btn">🔊</button>
+              <button id="nextBtn" class="circle-btn gray-btn">▶</button>
+            </div>
+          </div>
+
+          <div id="quizView" class="hidden">
+            <div class="center quiz-head">
+              <div class="trophy">🏆</div>
+              <h2>Find the Number!</h2>
+              <p>Can you find number <span id="quizTarget" class="quiz-target">?</span>?</p>
+            </div>
+
+            <div id="quizOptions" class="quiz-grid"></div>
+          </div>
+
+          <div id="feedbackOverlay" class="overlay">
+            <div id="feedbackBox" class="overlay-box">
+              <span id="feedbackIcon" class="overlay-icon">✅</span>
+              <div id="feedbackText">CORRECT!</div>
+            </div>
+          </div>
+        </section>
+
+        <div class="stats">
+          <div class="stats-left">
+            <div class="stats-icon">⭐</div>
+            <div>
+              <small>NUMBERS MASTERED</small>
+              <strong id="masteredCount">0 / 100</strong>
+              <div style="margin-top:4px;font-size:13px;color:#c7d2fe;font-weight:700;">Quiz Score: <span id="scoreCount">0</span></div>
+            </div>
+          </div>
+          <button id="resetBtn" class="reset-btn" title="Reset Progress">↺</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="panel-title">
+          <h3>▶ Number Grid</h3>
+          <div class="legend">
+            <span><i class="legend-box" style="background:#d1fae5;border:1px solid #86efac;"></i> Learned</span>
+            <span><i class="legend-box" style="background:#facc15;"></i> Current</span>
+          </div>
+        </div>
+
+        <div id="numberGrid" class="grid"></div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      Made for curious little minds. Keep counting!
+    </footer>
+  </div>
+
+  <script>
+    let mode = 'explore';
+    let currentNum = 0;
+    let completedNums = new Set();
+    let quizTarget = null;
+    let quizOptions = [];
+    let feedback = null;
+    let score = 0;
+
+    const tabExplore = document.getElementById('tabExplore');
+    const tabQuiz = document.getElementById('tabQuiz');
+    const exploreView = document.getElementById('exploreView');
+    const quizView = document.getElementById('quizView');
+    const bigNumber = document.getElementById('bigNumber');
+    const visualCounter = document.getElementById('visualCounter');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const speakBtn = document.getElementById('speakBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const numberGrid = document.getElementById('numberGrid');
+    const masteredCount = document.getElementById('masteredCount');
+    const scoreCount = document.getElementById('scoreCount');
+    const quizTargetEl = document.getElementById('quizTarget');
+    const quizOptionsEl = document.getElementById('quizOptions');
+    const feedbackOverlay = document.getElementById('feedbackOverlay');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackIcon = document.getElementById('feedbackIcon');
+    const feedbackText = document.getElementById('feedbackText');
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(String(text));
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function startNewQuiz() {
+      quizTarget = Math.floor(Math.random() * 100) + 1;
+      const options = new Set([quizTarget]);
+      while (options.size < 4) {
+        options.add(Math.floor(Math.random() * 100) + 1);
+      }
+      quizOptions = shuffle(Array.from(options));
+      feedback = null;
+      renderQuiz();
+    }
+
+    function showFeedback(type) {
+      feedback = type;
+      feedbackOverlay.classList.add('show');
+
+      if (type === 'correct') {
+        feedbackBox.className = 'overlay-box correct';
+        feedbackIcon.textContent = '✅';
+        feedbackText.textContent = 'CORRECT!';
+      } else {
+        feedbackBox.className = 'overlay-box wrong';
+        feedbackIcon.textContent = '❌';
+        feedbackText.textContent = 'TRY AGAIN';
+      }
+    }
+
+    function hideFeedback() {
+      feedback = null;
+      feedbackOverlay.classList.remove('show');
+    }
+
+    function handleQuizAnswer(answer) {
+      if (answer === quizTarget) {
+        showFeedback('correct');
+        score++;
+        speak('Great job! That is ' + answer);
+        updateStats();
+
+        setTimeout(() => {
+          hideFeedback();
+          startNewQuiz();
+        }, 1500);
+      } else {
+        showFeedback('wrong');
+        speak('Not quite. Try again!');
+        setTimeout(() => {
+          hideFeedback();
+        }, 1000);
+      }
+    }
+
+    function handleNumberClick(num) {
+      currentNum = num;
+      completedNums.add(num);
+      speak(num);
+      render();
+    }
+
+    function resetProgress() {
+      completedNums = new Set();
+      currentNum = 0;
+      score = 0;
+      render();
+    }
+
+    function renderVisualCounter(count) {
+      visualCounter.innerHTML = '';
+      if (count === 0) {
+        const p = document.createElement('p');
+        p.className = 'hint';
+        p.textContent = 'Click a number to start counting!';
+        visualCounter.appendChild(p);
+        return;
+      }
+
+      const maxDots = Math.min(count, 100);
+      for (let i = 0; i < maxDots; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        visualCounter.appendChild(dot);
+      }
+    }
+
+    function renderGrid() {
+      numberGrid.innerHTML = '';
+      for (let n = 1; n <= 100; n++) {
+        const btn = document.createElement('button');
+        btn.className = 'cell';
+        if (currentNum === n) btn.classList.add('active');
+        else if (completedNums.has(n)) btn.classList.add('completed');
+
+        btn.textContent = n;
+        btn.addEventListener('click', () => handleNumberClick(n));
+
+        if (completedNums.has(n)) {
+          const star = document.createElement('span');
+          star.className = 'star';
+          star.textContent = '★';
+          btn.appendChild(star);
+        }
+
+        numberGrid.appendChild(btn);
+      }
+    }
+
+    function renderQuiz() {
+      quizTargetEl.textContent = quizTarget ?? '?';
+      quizOptionsEl.innerHTML = '';
+
+      quizOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-btn';
+        btn.textContent = opt;
+        btn.addEventListener('click', () => handleQuizAnswer(opt));
+        quizOptionsEl.appendChild(btn);
+      });
+    }
+
+    function updateStats() {
+      masteredCount.textContent = completedNums.size + ' / 100';
+      scoreCount.textContent = score;
+    }
+
+    function renderMode() {
+      const isExplore = mode === 'explore';
+      exploreView.classList.toggle('hidden', !isExplore);
+      quizView.classList.toggle('hidden', isExplore);
+      tabExplore.classList.toggle('active', isExplore);
+      tabQuiz.classList.toggle('active', !isExplore);
+    }
+
+    function renderExplore() {
+      bigNumber.textContent = currentNum || '?';
+      bigNumber.style.animation = 'none';
+      void bigNumber.offsetWidth;
+      bigNumber.style.animation = 'popIn 0.25s ease';
+      renderVisualCounter(currentNum);
+
+      prevBtn.disabled = currentNum <= 1;
+      nextBtn.disabled = currentNum >= 100;
+    }
+
+    function render() {
+      renderMode();
+      renderExplore();
+      renderGrid();
+      updateStats();
+      if (mode === 'quiz' && quizTarget !== null) {
+        renderQuiz();
+      }
+    }
+
+    tabExplore.addEventListener('click', () => {
+      mode = 'explore';
+      render();
+    });
+
+    tabQuiz.addEventListener('click', () => {
+      mode = 'quiz';
+      startNewQuiz();
+      render();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      handleNumberClick(Math.max(1, currentNum - 1));
+    });
+
+    nextBtn.addEventListener('click', () => {
+      handleNumberClick(Math.min(100, currentNum + 1));
+    });
+
+    speakBtn.addEventListener('click', () => {
+      if (currentNum > 0) speak(currentNum);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      resetProgress();
+    });
+
+    render();
+  </script>
+</body>
+</html>
